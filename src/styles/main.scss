@@ -1,0 +1,16 @@
+@import 'variables';
+@import 'header';
+@import 'dashboard';
+@import 'expenses';
+
+#root {
+    background-color: $background;
+}
+
+.btn-outline-primary {
+    border-color: $accent-brown !important;
+    color: $accent-brown !important;
+    &:hover {
+        background-color: darken($background, 0.5) !important;
+    }
+}

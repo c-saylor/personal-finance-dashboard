@@ -1,0 +1,50 @@
+// _header.scss
+
+$primary-green: #4A7C59;
+$secondary-green: #7DA17A;
+$accent-brown: #5A3E36;
+$light-brown: #A88F77;
+$background: #F4F1ED;
+$white: #FFFFFF;
+
+$font-primary: 'Inter', sans-serif;
+
+.custom-navbar {
+  background-color: $background;
+  border-bottom: 1px solid $light-brown;
+  padding: 0.75rem 2rem;
+  font-family: $font-primary;
+
+  .navbar-brand {
+    color: $primary-green;
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 1.5px;
+
+    &:hover {
+      color: darken($primary-green, 10%);
+      text-decoration: none;
+    }
+  }
+
+  .nav-link {
+    color: $accent-brown;
+    font-weight: 600;
+    margin: 0 0.75rem;
+
+    &:hover {
+      color: $primary-green;
+      text-decoration: underline;
+    }
+  }
+
+  .profile-icon {
+    color: $accent-brown;
+    font-size: 1.5rem;
+    cursor: pointer;
+
+    &:hover {
+      color: $primary-green;
+    }
+  }
+}

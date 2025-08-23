@@ -1,0 +1,57 @@
+.expenses {
+    min-height: 100vh;
+    background: $background;
+
+    h1 {
+        color: $primary-green;
+        font-weight: 600;
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .expenses-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: $white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+        overflow: hidden;
+
+        thead {
+            background-color: $secondary-green;
+            color: $white;
+            text-align: left;
+
+            th {
+                padding: 1rem;
+                font-weight: 500;
+            }
+        }
+
+        tbody {
+            tr {
+                border-bottom: 1px solid $light-brown;
+
+                td {
+                    padding: 0.75rem 1rem;
+                    color: $accent-brown;
+                }
+            }
+        }
+    }
+
+    .add-expense-btn {
+        margin-top: 1.5rem;
+        background-color: $primary-green;
+        color: $white;
+        padding: 0.75rem 1.25rem;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: background-color 0.2s ease;
+        float: right;
+
+        &:hover {
+            background-color: darken($primary-green, 8%);
+        }
+    }
+}
