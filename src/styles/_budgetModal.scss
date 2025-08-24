@@ -1,0 +1,79 @@
+.budget-modal {
+    .modal-content {
+      background-color: $background;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      color: $accent-brown;
+      border: none;
+    }
+    .modal-header {
+      background-color: $primary-green;
+      color: $white;
+      border-bottom: none;
+      border-radius: 1rem 1rem 0 0;
+      padding: 1rem 1.25rem;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+
+      .modal-title {
+        font-weight: 600;
+      }
+
+      .btn-close {
+        filter: invert(1);
+        opacity: 0.9;
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+    .modal-body {
+      margin-top: 3rem;
+
+      .form-label {
+        font-weight: 500;
+        color: $accent-brown;
+      }
+      select,
+      input {
+        border: 1px solid $light-brown;
+        border-radius: 8px;
+        padding: 0.5rem;
+        &:focus {
+          border-color: $secondary-green;
+          box-shadow: 0 0 4px rgba(125, 161, 122, 0.4);
+        }
+      }
+    }
+    .modal-footer {
+      .btn {
+        border-radius: 8px;
+        padding: 0.5rem 1.25rem;
+        font-weight: 500;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+  
+        &:hover {
+          transform: translateY(-1px);
+        }
+      }
+  
+      .btn-primary {
+        background-color: $primary-green !important;
+        border-color: $primary-green;
+        color: $white;
+  
+        &:hover {
+          background-color: $secondary-green;
+          border-color: $secondary-green;
+        }
+      }
+
+      .btn-secondary {
+        background-color: $accent-brown !important;
+      }
+    }
+  }
+  

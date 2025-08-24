@@ -49,13 +49,13 @@ interface EditExpenseModalProps {
     return (
       <Modal show={isOpen} onHide={onClose} centered className="expense-modal">
         <Modal.Header closeButton>
-          <Modal.Title>Edit Expense</Modal.Title>
+          <Modal.Title>{expense ? 'Edit Expense' : 'Add Expense'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
   
             <Form.Group className="mb-3" controlId="desc">
-              <Form.Label>Description</Form.Label>
+              <Form.Label>Description<span className="required">*</span></Form.Label>
               <Form.Control
                 type="text"
                 value={description}
@@ -65,7 +65,7 @@ interface EditExpenseModalProps {
             </Form.Group>
   
             <Form.Group className="mb-3" controlId="amount">
-              <Form.Label>Amount ($)</Form.Label>
+              <Form.Label>Amount ($)<span className="required">*</span></Form.Label>
               <Form.Control
                 type="number"
                 min="0"
@@ -77,10 +77,11 @@ interface EditExpenseModalProps {
             </Form.Group>
   
             <Form.Group className="mb-3" controlId="category">
-              <Form.Label>Category</Form.Label>
+              <Form.Label>Category<span className="required">*</span></Form.Label>
               <Form.Select
                 value={category}
                 onChange={e => setCategory(e.target.value)}
+                className="form-control"
               >
                 {['Groceries', 'Utilities', 'Rent', 'Entertainment', 'Transportation', 'Healthcare', 'Other'].map(cat => (
                   <option key={cat} value={cat}>
@@ -91,7 +92,7 @@ interface EditExpenseModalProps {
             </Form.Group>
   
             <Form.Group className="mb-3" controlId="date">
-              <Form.Label>Date</Form.Label>
+              <Form.Label>Date<span className="required">*</span></Form.Label>
               <Form.Control
                 type="date"
                 value={date}
@@ -106,7 +107,7 @@ interface EditExpenseModalProps {
               className="w-100"
               style={{ fontWeight: '600' }}
             >
-              Save Changes
+              {expense ? "Save Changes" : "Add Expense"}
             </Button>
           </Form>
         </Modal.Body>

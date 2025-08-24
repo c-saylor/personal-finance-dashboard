@@ -1,0 +1,78 @@
+.budgets {
+    background: $background;
+    padding: 2rem;
+
+    h1 {
+        color: $primary-green;
+        font-weight: 600;
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .add-budget-btn {
+        margin-top: 1.5rem;
+        background-color: $primary-green;
+        color: $white;
+        padding: 0.75rem 1.25rem;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: background-color 0.2s ease;
+        float: right;
+        border: none;
+
+        &:hover {
+            background-color: darken($primary-green, 8%);
+        }
+    }
+  
+    .budget-card {
+      border: 1px solid $light-brown;
+      border-radius: 12px;
+      background: $white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  
+      .budget-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+  
+        h5 {
+          color: $primary-green;
+          margin: 0;
+        }
+  
+        .actions {
+          display: flex;
+          gap: 0.5rem;
+  
+          button {
+            border-radius: 6px;
+          }
+        }
+      }
+  
+      p {
+        color: $accent-brown;
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+      }
+  
+      .budget-progress {
+        height: 1.2rem;
+        border-radius: 8px;
+        background-color: $light-brown;
+  
+        .progress-bar {
+          background-color: $primary-green;
+          font-size: 0.75rem;
+          font-weight: 600;
+        }
+  
+        &.over-budget .progress-bar {
+          background-color: #d9534f; // red for alert
+        }
+      }
+    }
+  }
+  

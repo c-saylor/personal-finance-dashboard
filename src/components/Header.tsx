@@ -6,7 +6,7 @@ const Header: React.FC = () => {
   return (
     <Navbar collapseOnSelect expand="md" variant="light" className="custom-navbar" sticky="top">
       <Container>
-        <Navbar.Brand href="#">FinanceDash</Navbar.Brand>
+        <Navbar.Brand href="/">FinanceDash</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">

@@ -1,6 +1,6 @@
 .expenses {
-    min-height: 100vh;
     background: $background;
+    padding-top: 1rem;
 
     h1 {
         color: $primary-green;
@@ -49,6 +49,7 @@
         font-weight: 500;
         transition: background-color 0.2s ease;
         float: right;
+        border: none;
 
         &:hover {
             background-color: darken($primary-green, 8%);
