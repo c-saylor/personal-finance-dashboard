@@ -13,14 +13,14 @@ const CountUp: React.FC<CountUpProps> = ({ value, duration = 1000, prefix = '', 
   useEffect(() => {
     let start = 0;
     const end = value;
-    const increment = end / (duration / 16); // roughly 60fps
+    const increment = end / (duration / 16); // ~60fps
 
     const step = () => {
       start += increment;
       if (start >= end) {
         setCount(end);
       } else {
-        setCount(Math.floor(start));
+        setCount(start);
         requestAnimationFrame(step);
       }
     };
@@ -28,7 +28,16 @@ const CountUp: React.FC<CountUpProps> = ({ value, duration = 1000, prefix = '', 
     requestAnimationFrame(step);
   }, [value, duration]);
 
-  return <span>{prefix}{count.toLocaleString()}{suffix}</span>;
+  return (
+    <span>
+      {prefix}
+      {count.toLocaleString(undefined, {
+        minimumFractionDigits: count % 1 === 0 ? 0 : 2,
+        maximumFractionDigits: 2,
+      })}
+      {suffix}
+    </span>
+  );
 };
 
 export default CountUp;
