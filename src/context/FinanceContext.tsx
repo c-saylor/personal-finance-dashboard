@@ -12,6 +12,7 @@ export interface Budget {
   id: string;
   category: string;
   limit: number;
+  month: string; //yyyy-mm preferrered
 }
 
 interface FinanceContextType {
