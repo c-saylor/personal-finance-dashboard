@@ -26,3 +26,48 @@
         background-color: darken($background, 0.5) !important;
     }
 }
+
+  /* Summary & Budget Cards Grid */
+  .summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(301px, 1fr));
+    gap: 1.5rem;
+    align-items: stretch;
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background-color: $white;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      padding: 1.5rem;
+      min-width: 220px;
+      min-height: 150px;
+      transition: transform 0.2s, box-shadow 0.2s;
+
+      h5 {
+        color: $accent-brown;
+        font-weight: 600;
+      }
+
+      .summary-value {
+        color: $primary-green;
+      }
+
+      /* Only apply hover if the card is interactive */
+      &.interactive:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        cursor: pointer;
+      }
+
+      /* Budget Alerts */
+      .budget-alert {
+        font-weight: 600;
+        &.safe { color: $primary-green; }
+        &.warning { color: #FFC107; } // amber
+        &.over { color: #DC3545; }    // red
+      }
+    }
+  }

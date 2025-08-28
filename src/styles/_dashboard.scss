@@ -8,34 +8,6 @@
     font-weight: 700;
   }
 
-  /* Summary Cards */
-  .summary-cards {
-    .card {
-      background-color: $white;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-      padding: 1.5rem;
-      min-width: 220px;
-      transition: transform 0.2s, box-shadow 0.2s;
-
-      h5 {
-        color: $accent-brown;
-        font-weight: 600;
-      }
-
-      .summary-value {
-        color: $primary-green;
-      }
-
-      /* Only apply hover if the card is interactive */
-      &.interactive:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        cursor: pointer;
-      }
-    }
-  }
-
   /* Progress Bars */
   .progress {
     height: 8px;
@@ -94,11 +66,9 @@
 
       /* Only show hover effect if quick actions exist */
       &.interactive:hover {
-
         .quick-actions {
           opacity: 1;
         }
-
         transform: translateY(-1px);
       }
 
@@ -106,6 +76,19 @@
         opacity: 0;
         transition: opacity 0.2s;
       }
+    }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 992px) { // tablet
+    .summary-cards {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+  }
+
+  @media (max-width: 576px) { // mobile
+    .summary-cards {
+      grid-template-columns: 1fr; 
     }
   }
 }

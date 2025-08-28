@@ -55,7 +55,7 @@ const SpendingByCategoryChart: React.FC = () => {
   };
 
   return (
-    <div style={{ height: '300px' }}>
+    <div style={{ height: '100%', width: '100%' }}>
       <Doughnut data={chartData} options={chartOptions} />
     </div>
   );
