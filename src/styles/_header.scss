@@ -36,6 +36,7 @@ $font-primary: 'Inter', sans-serif;
     &:hover {
       color: $primary-green;
       text-decoration: underline;
+      cursor: pointer;
     }
   }
 
