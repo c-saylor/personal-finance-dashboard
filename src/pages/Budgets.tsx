@@ -1,17 +1,19 @@
 import React, { useState } from "react";
-import { Card, Button, Table, Badge, Row, Col } from "react-bootstrap";
+import { Card, Button, Table, Row, Col } from "react-bootstrap";
 import { useFinance, Budget } from "../context/FinanceContext";
 import BudgetModal from "../components/BudgetModal";
 import { categoryColors } from "../utils/colors";
+import { getCurrencySymbol } from "../utils/currency";
 
 const BudgetsPage: React.FC = () => {
-  const { budgets, expenses, addBudget, updateBudget, removeBudget } = useFinance();
+  const { budgets, expenses, addBudget, updateBudget, removeBudget, settings } = useFinance();
   const [showModal, setShowModal] = useState(false);
   const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  const monthKey = `${currentMonth.getFullYear()}-${currentMonth.getMonth() + 1}`;
-  const budgetsThisMonth = budgets.filter(b => b.month === monthKey);
+  const monthKey = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}`;
+  const budgetsThisMonth = budgets.filter(b => b.month === monthKey);  
+  const currencySymbol = getCurrencySymbol(settings.currency);
 
   const getSpentForCategory = (category: string) => {
     return expenses
@@ -31,16 +33,19 @@ const BudgetsPage: React.FC = () => {
     setShowModal(true);
   };
 
+  const handleBudgetSave = (budgetData: Omit<Budget, "id">) => {
+    if (editingBudget) updateBudget(editingBudget.id, budgetData);
+    else addBudget(budgetData);
+    setShowModal(false);
+  };
+
   const handleCopyFromPreviousMonth = () => {
     const [year, month] = monthKey.split("-").map(Number);
     const prevMonth = month === 1 ? 12 : month - 1;
     const prevYear = month === 1 ? year - 1 : year;
-    const prevMonthKey = `${prevYear}-${prevMonth}`;
-
+    const prevMonthKey = `${prevYear}-${String(prevMonth).padStart(2, '0')}`;
     const previousBudgets = budgets.filter(b => b.month === prevMonthKey);
-    previousBudgets.forEach(b => {
-      addBudget({ ...b, month: monthKey });
-    });
+    previousBudgets.forEach(b => addBudget({ ...b, month: monthKey }));
   };
 
   return (
@@ -102,17 +107,12 @@ const BudgetsPage: React.FC = () => {
                           {budget.category}
                         </span>
                       </td>
-                      <td>${budget.limit.toFixed(2)}</td>
-                      <td>${spent.toFixed(2)}</td>
-                      <td>${remaining.toFixed(2)}</td>
+                      <td>{currencySymbol}{budget.limit.toFixed(2)}</td>
+                      <td>{currencySymbol}{spent.toFixed(2)}</td>
+                      <td>{currencySymbol}{remaining.toFixed(2)}</td>
                       <td>
                         <div style={{ backgroundColor: "#e0e0e0", borderRadius: 8, height: 12 }}>
-                          <div style={{
-                            width: `${progressPercent}%`,
-                            backgroundColor: progressColor,
-                            height: '100%',
-                            borderRadius: 8
-                          }}></div>
+                          <div style={{ width: `${progressPercent}%`, backgroundColor: progressColor, height: '100%', borderRadius: 8 }}></div>
                         </div>
                       </td>
                       <td>
@@ -128,11 +128,7 @@ const BudgetsPage: React.FC = () => {
         </Card.Body>
       </Card>
 
-      <Button
-        variant="primary"
-        className="add-budget-btn rounded-circle shadow-lg position-fixed"
-        onClick={handleAdd}
-      >
+      <Button variant="primary" className="add-budget-btn rounded-circle shadow-lg position-fixed" onClick={handleAdd}>
         +
       </Button>
 
@@ -140,15 +136,8 @@ const BudgetsPage: React.FC = () => {
         show={showModal}
         budget={editingBudget}
         onClose={() => setShowModal(false)}
-        categories={['Groceries', 'Utilities', 'Rent', 'Entertainment', 'Transportation', 'Healthcare', 'Other']}
-        onSave={(budgetData) => {
-          if (editingBudget) {
-            updateBudget(editingBudget.id, { ...budgetData, month: editingBudget.month });
-          } else {
-            addBudget({ ...budgetData, month: monthKey });
-          }
-          setShowModal(false);
-        }}
+        categories={settings.categories}
+        onSave={handleBudgetSave}
       />
     </div>
   );

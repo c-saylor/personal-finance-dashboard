@@ -5,6 +5,7 @@
 @import 'expenseModal';
 @import 'budgets';
 @import 'budgetModal';
+@import 'preferences';
 
 #root {
     background-color: $background;
@@ -16,7 +17,12 @@
     background-color: $background;
 }
 
-
+.form-control, .form-select {
+  &:focus {
+      border-color: $secondary-green !important;
+      box-shadow: 0 0 0 .25rem lighten($secondary-green, 0.7) !important;
+  }
+}
 
 .btn-outline-primary {
     border-color: $accent-brown !important;
@@ -25,6 +31,23 @@
     &:hover {
         background-color: darken($background, 0.5) !important;
     }
+}
+
+.btn-outline-secondary {
+  border-color: $light-brown !important;
+  color: $accent-brown;
+
+  &:hover {
+    background-color: $light-brown !important;
+  }
+}
+
+.btn-primary {
+  background-color: $primary-green !important;
+  border: none !important;
+  &:hover {
+    background-color: $secondary-green !important;
+  }
 }
 
   /* Summary & Budget Cards Grid */

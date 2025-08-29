@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,6 +14,7 @@ import {
 import { Line } from "react-chartjs-2";
 import { useFinance } from "../context/FinanceContext";
 import { categoryColors } from "../utils/colors";
+import { currencySymbols } from "../utils/currency";
 
 ChartJS.register(
   CategoryScale,
@@ -26,67 +27,79 @@ ChartJS.register(
 );
 
 const lineDashPatterns: number[][] = [
-  [],               // solid
-  [10, 6],          // long dash
-  [4, 4],           // medium dash
-  [2, 6],           // dot-like
-  [12, 4, 2, 4],    // dash-dot
-  [16, 6, 2, 6, 2, 6], // dash-dot-dot
+  [], [10, 6], [4, 4], [2, 6], [12, 4, 2, 4], [16, 6, 2, 6, 2, 6],
 ];
 
-
 const SpendingOverTimeChart: React.FC = () => {
-  const { expenses, budgets } = useFinance();
+  const { expenses, budgets, settings } = useFinance();
   const [granularity, setGranularity] = useState<"week" | "month" | "year">("month");
+  const currencySymbol = currencySymbols[settings.currency] || settings.currency;
 
-  const categories = budgets.map((b) => b.category);
+  const categories = Array.from(new Set(budgets.map(b => b.category)));
 
-  // Helper: get time key by granularity
+  const filteredExpenses = useMemo(() => {
+    const now = new Date();
+    let startDate: Date;
+    if (granularity === "month") {
+      startDate = new Date(); startDate.setMonth(now.getMonth() - 1);
+    } else if (granularity === "year") {
+      startDate = new Date(); startDate.setFullYear(now.getFullYear() - 1);
+    } else { // week
+      startDate = new Date(); startDate.setDate(now.getDate() - 7);
+    }
+    startDate.setHours(0, 0, 0, 0);
+
+    return expenses.filter(exp => {
+      const d = new Date(exp.date);
+      return !isNaN(d.getTime()) && d >= startDate && d <= now;
+    });
+  }, [expenses, granularity]);
+
   const getTimeKey = (date: Date) => {
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, "0");
 
-    if (granularity === "year") return `${y}`;
-    if (granularity === "month") return `${y}-${m}`;
-    if (granularity === "week") {
-      const week = Math.ceil(((date.getTime() - new Date(y, 0, 1).getTime()) / 86400000 + 1) / 7);
-      return `${y}-W${String(week).padStart(2, "0")}`;
+    if (granularity === "year") {
+      // Group by month
+      return `${y}-${m}`;
     }
-    return `${y}-${m}-${String(date.getDate()).padStart(2, "0")}`;
+
+    // For month/week, include day
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
   };
 
-  // Aggregate expenses by category and time
+
+
   const dataMap: Record<string, Record<string, number>> = {};
-  categories.forEach((cat) => (dataMap[cat] = {}));
+  categories.forEach(cat => (dataMap[cat] = {}));
   const allKeysSet = new Set<string>();
 
-  expenses.forEach((exp) => {
-    const date = new Date(exp.date);
-    if (isNaN(date.getTime())) return;
-
-    const key = getTimeKey(date);
+  filteredExpenses.forEach(exp => {
+    const key = getTimeKey(new Date(exp.date));
     allKeysSet.add(key);
-
-    if (!dataMap[exp.category]) dataMap[exp.category] = {};
     dataMap[exp.category][key] = (dataMap[exp.category][key] || 0) + Number(exp.amount || 0);
   });
 
   const allKeys = Array.from(allKeysSet).sort(
-    (a, b) => new Date(a + "-01").getTime() - new Date(b + "-01").getTime()
+    (a, b) => new Date(a).getTime() - new Date(b).getTime()
   );
 
   const chartData = {
     labels: allKeys.map((key) => {
-      if (granularity === "year") return key;
-      const [y, m] = key.split("-");
-      return new Date(Number(y), Number(m) - 1).toLocaleString("default", {
-        month: "short",
-        year: granularity === "month" ? "numeric" : undefined,
-      });
+      const [year, month, day] = key.split("-");
+      const date = new Date(Number(year), Number(month) - 1, day ? Number(day) : 1);
+
+      if (granularity === "year") {
+        // show Month name only
+        return date.toLocaleString("default", { month: "short" });
+      }
+
+      return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
     }),
     datasets: categories.map((cat, i): ChartDataset<"line"> => ({
       label: cat,
-      data: allKeys.map((key) => dataMap[cat][key] || 0),
+      data: allKeys.map(key => dataMap[cat][key] || 0),
       borderColor: categoryColors[cat] || "#4A7C59",
       backgroundColor: "rgba(74, 124, 89, 0.2)",
       fill: true,
@@ -100,35 +113,18 @@ const SpendingOverTimeChart: React.FC = () => {
   const options: ChartOptions<"line"> = {
     responsive: true,
     plugins: {
-      legend: {
-        display: true,
-        position: "top",
-        labels: {
-          boxHeight: 10
-        }
-      },
-      title: {
-        display: true,
-        text: "Spending Over Time",
-      },
+      legend: { display: true, position: "top" },
+      title: { display: true, text: "Spending Over Time" },
       tooltip: {
         callbacks: {
-          label: (context) => {
-            const value = context.raw as number;
-            return `$${value.toFixed(2)}`;
-          },
+          label: ctx => `${currencySymbol}${(ctx.raw as number).toFixed(2)}`,
         },
       },
     },
     scales: {
       y: {
         beginAtZero: true,
-        ticks: {
-          callback: (val) => {
-            const num = typeof val === "number" ? val : parseFloat(val);
-            return `$${num.toFixed(2)}`;
-          },
-        },
+        ticks: { callback: val => `${currencySymbol}${Number(val).toFixed(2)}` },
       },
     },
   };
@@ -136,14 +132,12 @@ const SpendingOverTimeChart: React.FC = () => {
   return (
     <div>
       <div className="mb-3">
-        <label htmlFor="granularity" className="form-label">
-          Time Range:
-        </label>
+        <label htmlFor="granularity" className="form-label">Time Range:</label>
         <select
           id="granularity"
           className="form-select"
           value={granularity}
-          onChange={(e) => setGranularity(e.target.value as "week" | "month" | "year")}
+          onChange={e => setGranularity(e.target.value as "week" | "month" | "year")}
         >
           <option value="week">Week</option>
           <option value="month">Month</option>

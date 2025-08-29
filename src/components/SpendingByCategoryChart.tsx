@@ -1,13 +1,20 @@
 import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
-import { useFinance } from '../context/FinanceContext';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title, ChartOptions } from 'chart.js';
+import { Budget, Expense, useFinance } from '../context/FinanceContext';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, ChartOptions } from 'chart.js';
 import { categoryColors } from '../utils/colors';
+import { currencySymbols } from '../utils/currency';
 
-ChartJS.register(ArcElement, Tooltip, Legend, Title);
+ChartJS.register(ArcElement, Tooltip, Legend);
 
-const SpendingByCategoryChart: React.FC = () => {
-  const { expenses } = useFinance();
+interface SpendingByCategoryChartProps {
+  expenses: Expense[];
+  budgets: Budget[];
+}
+
+const SpendingByCategoryChart: React.FC<SpendingByCategoryChartProps> = ({ expenses, budgets }) => {
+  const { settings } = useFinance();
+  const currencySymbol = currencySymbols[settings.currency] || settings.currency;
 
   const categories = Array.from(new Set(expenses.map(e => e.category)));
 
@@ -16,9 +23,8 @@ const SpendingByCategoryChart: React.FC = () => {
     datasets: [
       {
         data: categories.map(cat =>
-          expenses
-            .filter(e => e.category === cat)
-            .reduce((sum, e) => sum + e.amount, 0)
+          expenses.filter(e => e.category === cat)
+                  .reduce((sum, e) => sum + e.amount, 0)
         ),
         backgroundColor: categories.map(cat => categoryColors[cat] || '#4A7C59'),
         borderColor: '#FFFFFF',
@@ -33,24 +39,17 @@ const SpendingByCategoryChart: React.FC = () => {
     plugins: {
       legend: {
         position: 'bottom',
-        labels: {
-          color: '#5A3E36',
-          font: {
-            weight: 'bold' as const, 
-          },
-        },
+        labels: { color: '#5A3E36', font: { weight: 'bold' as const } },
       },
       tooltip: {
         callbacks: {
           label: function (tooltipItem: any) {
             const value = tooltipItem.raw;
-            return `$${value.toFixed(2)}`;
+            return `${currencySymbol}${value.toFixed(2)}`;
           },
         },
       },
-      title: {
-        display: false,
-      },
+      title: { display: false },
     },
   };
 

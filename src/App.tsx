@@ -7,6 +7,7 @@ import { Container } from 'react-bootstrap';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ExpensesPage from './pages/Expenses';
 import BudgetsPage from './pages/Budgets';
+import PreferencesPage from './pages/Preferences';
 
 const App: React.FC = () => {
   return (
@@ -18,6 +19,7 @@ const App: React.FC = () => {
             <Route path="/" element={<Dashboard />}/>
             <Route path="/expenses" element={<ExpensesPage />} />
             <Route path="/budgets" element={<BudgetsPage />} />
+            <Route path="/preferences" element={<PreferencesPage/>}/>
           </Routes>
         </Container>
       </Router>

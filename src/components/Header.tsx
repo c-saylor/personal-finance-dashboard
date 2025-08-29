@@ -15,7 +15,9 @@ const Header: React.FC = () => {
             <Nav.Link href="/budgets">Budgets</Nav.Link>
           </Nav>
           <Nav>
-            <i className="bi bi-person-circle profile-icon"/>
+            <Nav.Link href="/preferences">            
+              <i className="bi bi-person-circle profile-icon"/>
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

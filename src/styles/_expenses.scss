@@ -7,6 +7,17 @@
     font-weight: 700;
   }
 
+  .btn-primary {
+    background-color: $primary-green;
+    border: none;
+    &:hover {
+      background-color: $secondary-green;
+    }
+    &:active {
+      background-color: $primary-green !important;
+    }
+  }
+
   .expenses-table {
     th {
       border-bottom: 2px solid $light-brown;

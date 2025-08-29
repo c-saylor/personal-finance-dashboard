@@ -5,6 +5,7 @@ interface Budget {
   id: string;
   category: string;
   limit: number;
+  month: string; // YYYY-MM format
 }
 
 interface BudgetModalProps {
@@ -20,25 +21,31 @@ const BudgetModal: React.FC<BudgetModalProps> = ({
   show,
   onClose,
   onSave,
-  categories
+  categories,
 }) => {
-  const [category, setCategory] = useState("");
-  const [limit, setLimit] = useState<number>(0);
+  const now = new Date();
+  const defaultMonth = now.toISOString().slice(0, 7); // YYYY-MM
+
+  const [category, setCategory] = useState<string>(budget?.category || categories[0]);
+  const [limit, setLimit] = useState<number>(budget?.limit || 0);
+  const [month, setMonth] = useState<string>(budget?.month || defaultMonth);
 
   useEffect(() => {
     if (budget) {
       setCategory(budget.category);
       setLimit(budget.limit);
+      setMonth(budget.month || defaultMonth);
     } else {
       setCategory(categories[0]);
       setLimit(0);
+      setMonth(defaultMonth);
     }
-  }, [budget, categories]);
+  }, [budget, categories, defaultMonth]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!category || limit <= 0) return;
-    onSave({ category, limit });
+    if (!category || limit <= 0 || !month) return;
+    onSave({ category, limit, month });
     onClose();
   };
 
@@ -51,14 +58,19 @@ const BudgetModal: React.FC<BudgetModalProps> = ({
         <Modal.Body>
           <Form.Group controlId="formCategory" className="mb-3">
             <Form.Label>Category</Form.Label>
-            <Form.Select value={category} onChange={(e) => setCategory(e.target.value)} required>
-                {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                        {cat}
-                    </option>
-                ))}
+            <Form.Select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              required
+            >
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
             </Form.Select>
           </Form.Group>
+
           <Form.Group controlId="formLimit" className="mb-3">
             <Form.Label>Limit ($)</Form.Label>
             <Form.Control
@@ -68,7 +80,18 @@ const BudgetModal: React.FC<BudgetModalProps> = ({
               required
             />
           </Form.Group>
+
+          <Form.Group controlId="formMonth" className="mb-3">
+            <Form.Label>Month</Form.Label>
+            <Form.Control
+              type="month"
+              value={month}
+              onChange={(e) => setMonth(e.target.value)}
+              required
+            />
+          </Form.Group>
         </Modal.Body>
+
         <Modal.Footer>
           <Button variant="secondary" onClick={onClose}>
             Cancel
