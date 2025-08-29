@@ -16,6 +16,14 @@ const SpendingByCategoryChart: React.FC<SpendingByCategoryChartProps> = ({ expen
   const { settings } = useFinance();
   const currencySymbol = currencySymbols[settings.currency] || settings.currency;
 
+  if (!expenses || expenses.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full w-full text-gray-500 font-medium p-4">
+        No expenses yet. Add some expenses to see category breakdowns!
+      </div>
+    );
+  }
+
   const categories = Array.from(new Set(expenses.map(e => e.category)));
 
   const chartData = {
