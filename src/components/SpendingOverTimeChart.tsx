@@ -27,7 +27,12 @@ ChartJS.register(
 );
 
 const lineDashPatterns: number[][] = [
-  [], [10, 6], [4, 4], [2, 6], [12, 4, 2, 4], [16, 6, 2, 6, 2, 6],
+  [],
+  [10, 6],
+  [4, 4],
+  [2, 6],
+  [12, 4, 2, 4],
+  [16, 6, 2, 6, 2, 6],
 ];
 
 const SpendingOverTimeChart: React.FC = () => {
@@ -35,17 +40,28 @@ const SpendingOverTimeChart: React.FC = () => {
   const [granularity, setGranularity] = useState<"week" | "month" | "year">("month");
   const currencySymbol = currencySymbols[settings.currency] || settings.currency;
 
-  const categories = Array.from(new Set(budgets.map(b => b.category)));
+  // Build categories from both budgets and expenses
+  const categories = Array.from(
+    new Set([
+      ...budgets.map(b => b.category),
+      ...expenses.map(e => e.category),
+    ])
+  );
 
   const filteredExpenses = useMemo(() => {
     const now = new Date();
     let startDate: Date;
+
     if (granularity === "month") {
-      startDate = new Date(); startDate.setMonth(now.getMonth() - 1);
+      startDate = new Date();
+      startDate.setMonth(now.getMonth() - 1);
     } else if (granularity === "year") {
-      startDate = new Date(); startDate.setFullYear(now.getFullYear() - 1);
-    } else { // week
-      startDate = new Date(); startDate.setDate(now.getDate() - 7);
+      startDate = new Date();
+      startDate.setFullYear(now.getFullYear() - 1);
+    } else {
+      // week
+      startDate = new Date();
+      startDate.setDate(now.getDate() - 7);
     }
     startDate.setHours(0, 0, 0, 0);
 
@@ -69,8 +85,7 @@ const SpendingOverTimeChart: React.FC = () => {
     return `${y}-${m}-${d}`;
   };
 
-
-
+  // Initialize data structures
   const dataMap: Record<string, Record<string, number>> = {};
   categories.forEach(cat => (dataMap[cat] = {}));
   const allKeysSet = new Set<string>();
@@ -78,7 +93,13 @@ const SpendingOverTimeChart: React.FC = () => {
   filteredExpenses.forEach(exp => {
     const key = getTimeKey(new Date(exp.date));
     allKeysSet.add(key);
-    dataMap[exp.category][key] = (dataMap[exp.category][key] || 0) + Number(exp.amount || 0);
+
+    if (!dataMap[exp.category]) {
+      dataMap[exp.category] = {}; // safeguard for unexpected categories
+    }
+
+    dataMap[exp.category][key] =
+      (dataMap[exp.category][key] || 0) + Number(exp.amount || 0);
   });
 
   const allKeys = Array.from(allKeysSet).sort(
@@ -91,7 +112,7 @@ const SpendingOverTimeChart: React.FC = () => {
       const date = new Date(Number(year), Number(month) - 1, day ? Number(day) : 1);
 
       if (granularity === "year") {
-        // show Month name only
+        // Show Month name only
         return date.toLocaleString("default", { month: "short" });
       }
 
@@ -124,7 +145,9 @@ const SpendingOverTimeChart: React.FC = () => {
     scales: {
       y: {
         beginAtZero: true,
-        ticks: { callback: val => `${currencySymbol}${Number(val).toFixed(2)}` },
+        ticks: {
+          callback: val => `${currencySymbol}${Number(val).toFixed(2)}`,
+        },
       },
     },
   };
